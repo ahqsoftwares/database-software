@@ -1,4 +1,13 @@
 {
+  "name": "database-software",
+  "version": "1.0.0",
+  "description": "A software for database",
+  "main": "index.js",
+  "type": "commonjs",
+  "repository": "https://github.com/ahqsoftwares/database-software.git",
+  "author": "AHQ Softwares",
+  "license": "AHQ",
+  "private": false,
   "dependencies": {
     "express": "^4.18.1",
     "node-fetch": "2"

@@ -1,8 +1,5 @@
 const {Client: SDK} = require("../index");
 
-const client = new SDK({url: "http://localhost", port: "3000", token: "a"});
+const client = new SDK({url: "http://n7.danbot.host", port: "2088"/*"3000"*/, token: "Auth"});
 
-(async() => {
-         console.log(await client.get("a"));
-         client.delete("a");
-})();
+client.set("a", ["a", "c"]);

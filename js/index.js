@@ -96,6 +96,7 @@ class DB {
                            throw new Error(`${result.status}\nMSG: ${result.msg ? result.msg : "No message!"}`);
                   }
 
+                  return result.status;
          }
 
          /**
@@ -120,6 +121,8 @@ class DB {
                   if (result.status !== 200) {
                            throw new Error(`${result.status}\nMSG: ${result.msg ? result.msg : "No message!"}`);
                   }
+
+                  return result.status;
          }
 }
 

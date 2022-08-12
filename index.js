@@ -17,12 +17,24 @@ class Database extends EventEmitter {
                   this.port = port;
                   this.path = path;
                   this.json = JSON.parse("{}");
+                  this.raw = "{}";
                   this.app = app;
                   this.token = token;
                   
                   this.read()
+                  .then((data) => {
+                           this.raw = data;
+                           return data;
+                  })
                   .catch(() => {
                            this.write()
+                  })
+                  .then((data) => {
+                           this.json = JSON.parse(data);
+                  })
+                  .catch(() => {
+                           this.write();
+                           this.recover();
                   });
          }
 
@@ -38,13 +50,22 @@ class Database extends EventEmitter {
          }
 
          /**
+          * Create new reducer to add corroupted data
+          */
+          async recover() {
+                  writeFile(`${this.path}.recover.json`, String(this.raw), (err) => {
+                           if (err) {
+                                    throw new Error("write sync failed!");
+                           }
+                  });
+         }
+
+         /**
           * Reads reducer from database
           * @returns Boolean
           */
          async read() {
-                  const data = await readFileSync(this.path);
-                  this.json = JSON.parse(data);
-                  return true;
+                  return await readFileSync(this.path);
          }
 
          /**
@@ -139,8 +160,10 @@ class Database extends EventEmitter {
                                     break;
                   }
 
-                  this.json[key] = value;
-                  await this.write();
+                  if (this.json[key] !== value) {
+                           this.json[key] = value;
+                           await this.write();
+                  }
                   await res.status(200).json({status: 200});
          }
 
@@ -155,8 +178,10 @@ class Database extends EventEmitter {
                            return res.status(404).json({status: 404});
                   }
 
-                  delete this.json[key];
-                  await this.write();
+                  if (this.json[key]) {
+                           delete this.json[key];
+                           await this.write();
+                  }
                   await res.status(200).json({status: 200});
          }
 }
